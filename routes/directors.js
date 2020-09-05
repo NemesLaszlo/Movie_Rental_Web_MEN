@@ -41,7 +41,10 @@ router.post('/create', async (req, res) => {
     } else {
       res.render('error/500');
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    res.render('error/500');
+  }
 });
 
 module.exports = router;

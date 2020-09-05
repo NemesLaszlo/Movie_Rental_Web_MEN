@@ -30,6 +30,7 @@ app.use(express.static('public'));
 // Routes
 app.use('/', require('./routes/index'));
 app.use('/directors', require('./routes/directors'));
+app.use('/movies', require('./routes/movies'));
 
 app.listen(port, () =>
   console.log(
