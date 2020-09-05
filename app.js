@@ -16,6 +16,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+//Body Parser
+app.use(express.urlencoded({ limit: '10mb', extended: false }));
+app.use(express.json());
+
 // View engine - ejs setup and views
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
@@ -25,6 +29,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/', require('./routes/index'));
+app.use('/directors', require('./routes/directors'));
 
 app.listen(port, () =>
   console.log(
