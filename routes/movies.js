@@ -62,10 +62,87 @@ router.post('/create', async (req, res) => {
       saveCover(movie, req.body.cover);
 
       const newMovie = await movie.save();
-      res.redirect('/movies');
+      res.redirect(`/movies/${newMovie.id}`);
     } else {
       res.render('error/500');
     }
+  } catch (error) {
+    console.error(error);
+    res.render('error/500');
+  }
+});
+
+// @desc Get a movie by id
+// @route GET /movies/:id
+router.get('/:id', async (req, res) => {
+  try {
+    // populate - access to the director of this movie - "pre loads the director information"
+    const movie = await Movie.findById(req.params.id)
+      .populate('director')
+      .exec();
+
+    res.render('movies/show', { movie: movie });
+  } catch (error) {
+    console.error(error);
+    res.render('error/500');
+  }
+});
+
+// @desc Get the movie edit page by id (Update)
+// @route GET /movies/:id/edit
+router.get('/:id/edit', async (req, res) => {
+  try {
+    const directors = await Director.find({});
+    const movie = await Movie.findById(req.params.id);
+    if (!movie) {
+      return res.render('error/404');
+    }
+
+    res.render('movies/edit', { movie: movie, directors: directors });
+  } catch (error) {
+    console.error(error);
+    res.render('error/500');
+  }
+});
+
+// @desc Update a movie functionality
+// @route PUT /movies/:id
+router.put('/:id', async (req, res) => {
+  try {
+    let movie = await Movie.findById(req.params.id);
+
+    if (!movie) {
+      return res.render('error/404');
+    }
+    movie.title = req.body.title;
+    movie.director = req.body.director;
+    movie.releaseDate = new Date(req.body.releaseDate);
+    movie.playTime = req.body.playTime;
+    movie.description = req.body.description;
+    if (req.body.cover != null && req.body.cover != '') {
+      saveCover(movie, req.body.cover);
+    }
+
+    await movie.save();
+    res.redirect(`/movies/${movie.id}`);
+  } catch (error) {
+    console.error(error);
+    res.render('error/500');
+  }
+});
+
+// @desc Delete a movie functionality
+// @route DELETE /movies/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    const movie = await Movie.findById(req.params.id);
+
+    if (!movie) {
+      return res.render('error/404');
+    }
+
+    await movie.remove();
+    res.redirect('/movies');
   } catch (error) {
     console.error(error);
     res.render('error/500');
