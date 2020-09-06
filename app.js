@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const expressLayouts = require('express-ejs-layouts');
 const connectDB = require('./database/database');
+const methodOverride = require('method-override');
 
 // Load config and Database connection
 dotenv.config({ path: './config/config.env' });
@@ -26,6 +27,9 @@ app.set('views', __dirname + '/views');
 app.set('layout', 'layouts/layout');
 app.use(expressLayouts);
 app.use(express.static('public'));
+
+// Method override
+app.use(methodOverride('_method'));
 
 // Routes
 app.use('/', require('./routes/index'));
