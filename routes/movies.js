@@ -1,17 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
 const Movie = require('../models/Movie');
 const Director = require('../models/Director');
-const uploadPath = path.join('public', Movie.coverImageBasePath);
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-const upload = multer({
-  dest: uploadPath,
-  fileFilter: (req, file, callback) => {
-    callback(null, imageMimeTypes.includes(file.mimetype));
-  },
-});
 
 // @desc Get all movies - with a search option
 // @route GET /movies
@@ -53,7 +44,7 @@ router.get('/new', async (req, res) => {
 
 // @desc Create new movie functionality
 // @route POST /movies/create
-router.post('/create', upload.single('coverImageName'), async (req, res) => {
+router.post('/create', async (req, res) => {
   try {
     const existingMovie = await Movie.findOne({
       title: req.body.title,
@@ -61,16 +52,14 @@ router.post('/create', upload.single('coverImageName'), async (req, res) => {
     }).lean();
 
     if (!existingMovie) {
-      const fileName = req.file != null ? req.file.filename : null;
-
       const movie = new Movie({
         title: req.body.title,
         director: req.body.director,
         releaseDate: new Date(req.body.releaseDate),
         playTime: req.body.playTime,
-        coverImageName: fileName,
         description: req.body.description,
       });
+      saveCover(movie, req.body.cover);
 
       const newMovie = await movie.save();
       res.redirect('/movies');
@@ -82,5 +71,16 @@ router.post('/create', upload.single('coverImageName'), async (req, res) => {
     res.render('error/500');
   }
 });
+
+function saveCover(movie, coverEncoded) {
+  if (coverEncoded == null) {
+    return;
+  }
+  const cover = JSON.parse(coverEncoded);
+  if (cover != null && imageMimeTypes.includes(cover.type)) {
+    movie.coverImage = new Buffer.from(cover.data, 'base64');
+    movie.coverImageType = cover.type;
+  }
+}
 
 module.exports = router;

@@ -16,7 +16,8 @@
     "express",
     "mongodb",
     "mongoose",
-    "ejs"
+    "ejs",
+    "filepond"
   ],
   "author": "Laszlo Nemes",
   "license": "MIT",
@@ -31,8 +32,7 @@
     "express": "^4.17.1",
     "express-ejs-layouts": "^2.5.0",
     "mongoose": "^5.10.3",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.2"
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
