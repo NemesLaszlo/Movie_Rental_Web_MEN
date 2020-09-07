@@ -28,7 +28,7 @@ router.get('/new', (req, res) => {
   res.render('directors/new', { director: new Director() });
 });
 
-// @desc Create new author functionality
+// @desc Create new director functionality
 // @route POST /directors/create
 router.post('/create', async (req, res) => {
   try {
