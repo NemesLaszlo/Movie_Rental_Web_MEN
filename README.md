@@ -19,6 +19,7 @@ https://github.com/NemesLaszlo/Movie_Rental
 |          | PUT    | directors/:id      | Update a director by id.                                               |
 |          | DELETE | directors/:id      | Delete a director by id - delete every movies of the director as well. |
 | Movie    | GET    | movies             | Read all movies with a search option.                                  |
+|          | GET    | movies/available   | Read all available (not rented) movies.                                |
 |          | GET    | movies/new         | "Read" - Get the create new movie page.                                |
 |          | POST   | movies/create      | Create a new movie.                                                    |
 |          | GET    | movies/:id         | Read a specific movie by id.                                           |

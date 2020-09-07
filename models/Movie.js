@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Actor = require('./Actor');
 
 const MovieSchema = new mongoose.Schema({
   title: {
@@ -48,6 +49,20 @@ MovieSchema.virtual('coverImagePath').get(function () {
       this.coverImageType
     };charset=utf-8;base64,${this.coverImage.toString('base64')}`;
   }
+});
+
+// Delete every actor with the movie
+MovieSchema.pre('remove', function (next) {
+  Actor.find({ movie: this.id }, (err, actors) => {
+    if (err) {
+      next(err);
+    } else if (actors.length > 0) {
+      actors.forEach((actor) => actor.remove());
+      next();
+    } else {
+      next();
+    }
+  });
 });
 
 module.exports = mongoose.model('Movie', MovieSchema);

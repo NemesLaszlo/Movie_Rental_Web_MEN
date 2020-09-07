@@ -4,6 +4,7 @@
 <div>Release Date: <%= movie.releaseDate.toDateString() %></div>
 <div>Play Time: <%= movie.playTime %></div>
 <div>Status: <%= movie.status %></div>
+<div>Actors: <% actors.forEach(actor => { %> <%= actor.name%> <% }) %></div>
 <div>Description: <%= movie.description %></div>
 
 <a href="/movies/<%= movie.id %>/edit">Edit</a>

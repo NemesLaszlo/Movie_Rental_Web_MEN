@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Movie = require('../models/Movie');
 const Director = require('../models/Director');
+const Actor = require('../models/Actor');
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
 // @desc Get all movies - with a search option
@@ -76,6 +77,7 @@ router.post('/create', async (req, res) => {
         status: req.body.status,
       });
       saveCover(movie, req.body.cover);
+      saveActors(movie, req.body.actors);
 
       const newMovie = await movie.save();
       res.redirect(`/movies/${newMovie.id}`);
@@ -96,8 +98,9 @@ router.get('/:id', async (req, res) => {
     const movie = await Movie.findById(req.params.id)
       .populate('director')
       .exec();
+    const actors = await Actor.find({ movie: movie });
 
-    res.render('movies/show', { movie: movie });
+    res.render('movies/show', { movie: movie, actors: actors });
   } catch (error) {
     console.error(error);
     res.render('error/500');
@@ -108,13 +111,18 @@ router.get('/:id', async (req, res) => {
 // @route GET /movies/:id/edit
 router.get('/:id/edit', async (req, res) => {
   try {
-    const directors = await Director.find({});
     const movie = await Movie.findById(req.params.id);
     if (!movie) {
       return res.render('error/404');
     }
+    const directors = await Director.find({});
+    const actors = await Actor.find({ movie: movie });
 
-    res.render('movies/edit', { movie: movie, directors: directors });
+    res.render('movies/edit', {
+      movie: movie,
+      directors: directors,
+      actors: actors,
+    });
   } catch (error) {
     console.error(error);
     res.render('error/500');
@@ -175,6 +183,20 @@ function saveCover(movie, coverEncoded) {
     movie.coverImage = new Buffer.from(cover.data, 'base64');
     movie.coverImageType = cover.type;
   }
+}
+
+function saveActors(movie, actors) {
+  if (actors == null || actors == '') {
+    return;
+  }
+  let tmp = actors.trim().split(',');
+  tmp.forEach((actorName) => {
+    let newActor = new Actor({
+      name: actorName,
+      movie: movie,
+    });
+    newActor.save();
+  });
 }
 
 module.exports = router;
