@@ -29,6 +29,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+// @desc Get all available movies
+// @route GET /movies/available
+router.get('/available', async (req, res) => {
+  try {
+    const movies = await Movie.find({ status: 'Available' }).sort({
+      createdAt: 'desc',
+    });
+
+    res.render('movies/available', { movies: movies });
+  } catch (error) {
+    console.error(error);
+    res.render('error/500');
+  }
+});
+
 // @desc Get - Create new movie page
 // @route GET /movies/new
 router.get('/new', async (req, res) => {
@@ -58,6 +73,7 @@ router.post('/create', async (req, res) => {
         releaseDate: new Date(req.body.releaseDate),
         playTime: req.body.playTime,
         description: req.body.description,
+        status: req.body.status,
       });
       saveCover(movie, req.body.cover);
 
@@ -118,6 +134,7 @@ router.put('/:id', async (req, res) => {
     movie.director = req.body.director;
     movie.releaseDate = new Date(req.body.releaseDate);
     movie.playTime = req.body.playTime;
+    movie.status = req.body.status;
     movie.description = req.body.description;
     if (req.body.cover != null && req.body.cover != '') {
       saveCover(movie, req.body.cover);

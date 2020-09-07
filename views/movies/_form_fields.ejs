@@ -34,6 +34,15 @@
   <input type="file" name="cover" class="filepond" />
 </div>
 <div>
-  <label>Description</label>
-  <textarea name="description"><%= movie.description %></textarea>
+  <label>Status</label>
+  <div>
+    <select name="status">
+      <option value="Available" selected>Available</option>
+      <option value="Not Available">Not Available</option>
+    </select>
+  </div>
+  <div>
+    <label>Description</label>
+    <textarea name="description"><%= movie.description %></textarea>
+  </div>
 </div>

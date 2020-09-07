@@ -34,6 +34,12 @@ const MovieSchema = new mongoose.Schema({
     required: true,
     ref: 'Director',
   },
+  status: {
+    type: String,
+    default: 'Available',
+    enum: ['Available', 'Not Available'],
+    required: true,
+  },
 });
 
 MovieSchema.virtual('coverImagePath').get(function () {
